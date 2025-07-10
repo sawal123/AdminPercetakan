@@ -31,6 +31,8 @@
                     </div>
                 </div>
                 <div class="card-body pt-0">
+                    <x-search placeholder="Pelanggan" />
+
                     <div class="table-responsive">
                         <table class="table table-striped mb-0">
                             <thead class="table-light">
@@ -39,6 +41,7 @@
                                     <th>Nama</th>
                                     <th>No Hp</th>
                                     <th>Alamat</th>
+                                    <th>Sales</th>
                                     <th>Seller</th>
                                     <th class="text-end">Action</th>
                                 </tr>
@@ -46,10 +49,12 @@
                             <tbody>
                                 @forelse ($pelanggan as $index=>$item)
                                     <tr>
-                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ ($pelanggan->currentPage() - 1) * $pelanggan->perPage() + $index + 1 }}
+                                        </td>
                                         <td>{{ $item->nama }}</td>
                                         <td>{{ $item->telepon }}</td>
                                         <td>{{ $item->alamat }}</td>
+                                        <td>{{ $item->sales->nama ?? '-' }}</td>
                                         <td><span
                                                 class="badge {{ $item->seller ? 'bg-success' : 'bg-danger' }} ">{{ $item->seller ? 'Seller' : 'Non Seller' }}</span>
                                         </td>
@@ -68,6 +73,9 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        <div class="mt-4">
+                            {{ $pelanggan->links('pagination::bootstrap-5', data: ['scrollTo' => false]) }}
+                        </div>
                     </div>
                 </div>
             </div>

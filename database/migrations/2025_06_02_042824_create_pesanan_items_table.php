@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::create('pesanan_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pesanan_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tagihan_id')->constrained()->onDelete('cascade');
             $table->foreignId('barang_id')->constrained()->onDelete('cascade');
+            $table->text('deskripsi')->nullable();
             $table->float('panjang')->nullable(); // misal: meter
             $table->float('lebar')->nullable();
             $table->integer('jumlah')->default(1); // untuk barang satuan
             $table->integer('harga_satuan'); // ambil dari harga barang
             $table->integer('subtotal'); // hasil kalkulasi: panjang * lebar * harga atau jumlah * harga
-            $table->text('catatan')->nullable();
+            
             $table->timestamps();
         });
     }

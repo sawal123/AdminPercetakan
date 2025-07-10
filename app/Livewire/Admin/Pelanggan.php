@@ -2,12 +2,17 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Pelanggan as ModelsPelanggan;
+use App\Models\Sales;
 use Livewire\Component;
+use Livewire\WithPagination;
+// Paginator::useBootstrap();
+use App\Models\Pelanggan as ModelsPelanggan;
 
 class Pelanggan extends Component
 {
-    public $nama, $telepon, $alamat, $seller;
+    use WithPagination;
+    
+    public $nama, $telepon, $alamat, $seller, $sales_id;
     public $modalPelanggan = false;
     public $pelangganId, $modalConfirmDelete = false, $deleteId, $search;
 
@@ -18,6 +23,7 @@ class Pelanggan extends Component
         if ($pelangganId) {
             $this->pelangganId = $pelangganId;
             $pelanggan = ModelsPelanggan::find($pelangganId);
+            $this->sales_id = $pelanggan->sales_id;
             $this->nama = $pelanggan->nama;
             $this->telepon = $pelanggan->telepon;
             $this->alamat = $pelanggan->alamat;
@@ -28,7 +34,10 @@ class Pelanggan extends Component
 
         $this->modalPelanggan = true;
     }
-
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
     // Fungsi untuk menyimpan atau memperbarui data pelanggan
     public function simpan()
     {
@@ -43,6 +52,7 @@ class Pelanggan extends Component
             // Update data pelanggan
             $pelanggan = ModelsPelanggan::find($this->pelangganId);
             $pelanggan->update([
+                'sales_id' => $this->sales_id,
                 'nama' => $this->nama,
                 'telepon' => $this->telepon,
                 'alamat' => $this->alamat,
@@ -51,6 +61,7 @@ class Pelanggan extends Component
         } else {
             // Menyimpan data pelanggan baru
             ModelsPelanggan::create([
+                'sales_id' => $this->sales_id,
                 'nama' => $this->nama,
                 'telepon' => $this->telepon,
                 'alamat' => $this->alamat,
@@ -86,10 +97,11 @@ class Pelanggan extends Component
 
     public function render()
     {
-        $pelanggan = ModelsPelanggan::where('nama', 'like', '%' . $this->search . '%')
+        $sales = Sales::where('is_active', 1)->get();
+        $pelanggan = ModelsPelanggan::query()->where('nama', 'like', '%' . $this->search . '%')
             ->orWhere('alamat', 'like', '%' . $this->search . '%')
             ->orderBy('created_at', 'desc')
-            ->paginate(3);
-        return view('livewire.admin.pelanggan', ['pelanggan' => $pelanggan]);
+            ->paginate(10);
+        return view('livewire.admin.pelanggan', ['pelanggan' => $pelanggan, 'sales' => $sales]);
     }
 }

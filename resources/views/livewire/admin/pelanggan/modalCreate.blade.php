@@ -37,6 +37,18 @@
                         </div>
                     </div>
                     <div class="mb-3 row">
+                        <label for="sales" class="col-sm-2 col-form-label text-end">Sales</label>
+                        <div class="col-sm-10">
+                            <select wire:model.live='sales_id' class="form-control" id="sales" required>
+                                <option hidden>Pilih Sales</option>
+                                @foreach ($sales as $s)
+                                    <option value="{{ $s->id }}">{{ $s->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
                         <div class="col-sm-2"></div>
                         <div class="col-sm-10 d-flex align-items-center">
                             <input class="form-check-input me-2" type="checkbox" value=""
@@ -45,14 +57,14 @@
                                 Seller?
                             </label>
                         </div>
-                       
+
                     </div>
-                     <div class="modal-footer">
-                            <button type="button" wire:click="$set('modalPelanggan', false)"
-                                class="btn btn-secondary">Batal</button>
-                            <button type="submit"
-                                class="btn btn-primary">{{ $pelangganId ? 'Perbarui' : 'Simpan' }}</button>
-                        </div>
+                    <div class="modal-footer">
+                        <button type="button" wire:click="$set('modalPelanggan', false)"
+                            class="btn btn-secondary">Batal</button>
+                        <button type="submit"
+                            class="btn btn-primary">{{ $pelangganId ? 'Perbarui' : 'Simpan' }}</button>
+                    </div>
                 </form>
             </div>
         </div>

@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pelanggan_id')->constrained()->onDelete('cascade');
             $table->date('tanggal');
+            $table->string('invoice');
             $table->integer('total')->default(0); // total semua item
-            $table->string('status')->default('menunggu'); // bisa: menunggu, selesai, batal
+            $table->boolean('status')->default(0); // bisa: menunggu, selesai, batal
             $table->timestamps();
         });
     }

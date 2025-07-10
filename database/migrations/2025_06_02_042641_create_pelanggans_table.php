@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -11,12 +12,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pesanans', function (Blueprint $table) {
+        Schema::create('pelanggans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pelanggan_id')->constrained()->onDelete('cascade');
-            $table->date('tanggal');
-            $table->integer('total')->default(0); // total semua item
-            $table->string('status')->default('menunggu'); // bisa: menunggu, selesai, batal
+            $table->foreignId('sales_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('nama');
+            $table->string('telepon')->nullable();
+            $table->string('alamat')->nullable();
+            $table->boolean('seller')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pesanans');
+        Schema::dropIfExists('pelanggans');
     }
 };

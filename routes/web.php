@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\TagihanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,10 +18,15 @@ use Illuminate\Support\Facades\Route;
 Route::view('/', 'welcome');
 
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
-    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard'); 
-    Route::get('/barang', [AdminController::class, 'barang'])->name('barang'); 
-    Route::get('/tagihan', [AdminController::class, 'tagihan'])->name('tagihan'); 
-    Route::get('/pelanggan', [AdminController::class, 'pelanggan'])->name('pelanggan'); 
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/barang', [AdminController::class, 'barang'])->name('barang');
+    Route::get('/pelanggan', [AdminController::class, 'pelanggan'])->name('pelanggan');
+
+
+    Route::get('/tagihan', [TagihanController::class, 'tagihan'])->name('tagihan');
+    Route::get('/tagihan/create', [TagihanController::class, 'tagihanCreate'])->name('tagihan');
+    Route::get('/tagihan/view/{invoice}', [TagihanController::class, 'tagihanView'])->name('view-tagihan');
+    Route::get('/tagihan/edit/{invoice}', [TagihanController::class, 'tagihanEdit'])->name('view-tagihan');
 });
 
 Route::view('profile', 'profile')

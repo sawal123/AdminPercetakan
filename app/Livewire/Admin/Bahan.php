@@ -2,24 +2,29 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Bahan as ModelsBahan;
 use Livewire\Component;
+use Livewire\WithPagination;
+use App\Models\Bahan as ModelsBahan;
 
 class Bahan extends Component
 {
+    use WithPagination;
     public $nama, $deskripsi;
     public $openModal = false;
     public $confirmingDelete = false;
     public $bahan_id;
     public $isEdit = false;
     public $deleteId = null;
-
+    public $search = ''; // Tambahan untuk fitur search
     public function modal()
     {
         $this->resetForm();
         $this->openModal = true;
     }
-
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
     public function simpan()
     {
         $this->validate([
@@ -31,8 +36,9 @@ class Bahan extends Component
             'nama' => $this->nama,
             'deskripsi' => $this->deskripsi
         ]);
-        session()->flash('message', $this->barangId ? 'Bahan berhasil diperbarui.' : 'Bahan berhasil ditambahkan.');
-        $this->dispatch('showToast');
+        // session()->flash('message', $this->bahan_id ? 'Bahan berhasil diperbarui.' : 'Bahan berhasil ditambahkan.');
+        $message = $this->bahan_id ? 'Bahan berhasil diperbarui.' : 'Bahan berhasil ditambahkan.';
+        $this->dispatch('showToast', message: $message);
         $this->resetForm();
     }
 
@@ -58,8 +64,9 @@ class Bahan extends Component
             'nama' => $this->nama,
             'deskripsi' => $this->deskripsi
         ]);
-        session()->flash('message', 'Bahan berhasil dihapus.');
-        $this->dispatch('showToast');
+        // session()->flash('message', 'Bahan berhasil diperbarui.');
+        $message = 'Bahan berhasil diperbarui.';
+        $this->dispatch('showToast', message: $message);
         $this->resetForm();
     }
 
@@ -89,7 +96,11 @@ class Bahan extends Component
 
     public function render()
     {
-        $data = ModelsBahan::latest()->get();
+        // $data = ModelsBahan::latest()->get();
+        $data = ModelsBahan::query()
+            ->where('nama', 'like', '%' . $this->search . '%')
+            ->orderBy('created_at', 'desc')
+            ->paginate(3);
         return view('livewire.admin.bahan', ['data' => $data]);
     }
 }

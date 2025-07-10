@@ -1,5 +1,5 @@
 <div>
-     @if (session()->has('message'))
+    @if (session()->has('message'))
         @script
             <script>
                 $wire.on('showToast', () => {
@@ -32,10 +32,7 @@
                 <div class="card-body pt-0">
 
                     {{-- Search --}}
-                    <div class="mb-3" style="max-width: 300px;">
-                        <input type="text" class="form-control" placeholder="Cari kode atau nama barang..."
-                            wire:model.live.debounce.300ms="search">
-                    </div>
+                    <x-search placeholder="Barang" />
 
 
                     <div class="table-responsive">
@@ -57,7 +54,7 @@
                             <tbody>
                                 @forelse ($dataBarang as $index => $barang)
                                     <tr>
-                                        <td>{{ $dataBarang->firstItem() + $index }}</td>
+                                        <td>{{ ($dataBarang->currentPage() - 1) * $dataBarang->perPage() + $index + 1 }}</td>
                                         <td>{{ $barang->kode }}</td>
                                         <td>{{ $barang->nama }}</td>
                                         <td>{{ $barang->bahan->nama ?? '-' }}</td>
@@ -77,7 +74,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="9" class="text-center text-muted">Data tidak ditemukan.</td>
+                                        <td colspan="10" class="text-center text-muted">Data tidak ditemukan.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -86,7 +83,7 @@
 
                     {{-- Pagination --}}
                     <div class="mt-3">
-                        {{ $dataBarang->links() }}
+                        {{ $dataBarang->links("pagination::bootstrap-5", data: ['scrollTo' => false]) }}
                     </div>
 
                 </div>

@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\Bahan;
 use App\Models\Barang as ModelsBarang;
+use App\Models\Pelanggan;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -45,7 +46,7 @@ class Barang extends Component
 
     public function mount()
     {
-        $this->dataBahan = Bahan::all();
+        
     }
 
     public function modalB()
@@ -128,10 +129,13 @@ class Barang extends Component
             ->where('nama', 'like', '%' . $this->search . '%')
             ->orWhere('kode', 'like', '%' . $this->search . '%')
             ->orderBy('created_at', 'desc')
-            ->paginate(3);
+            ->paginate(10);
+            $this->dataBahan = Bahan::all();
+    
 
         return view('livewire.admin.barang', [
-            'dataBarang' => $barang
+            'dataBarang' => $barang,
+ 
         ]);
     }
 }

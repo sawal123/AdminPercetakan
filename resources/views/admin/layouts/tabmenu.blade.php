@@ -36,7 +36,7 @@
                     </li><!--end nav-item-->
                     <li class="nav-item">
                         <a class="nav-link" href="/dashboard/tagihan" wire:navigate>
-                            <i class="iconoir-invoice-alt menu-icon"></i>
+                            <i class="iconoir-database-check-solid menu-icon"></i>
                             <span>Tagihan</span>
                         </a>
                     </li><!--end nav-item-->

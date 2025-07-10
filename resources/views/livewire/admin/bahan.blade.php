@@ -1,20 +1,6 @@
 <div>
-     @if (session()->has('message'))
-        @script
-            <script>
-                $wire.on('showToast', () => {
-                    toastr.success('{{ session('message') }}', 'Success', {
-                        positionClass: 'toast-top-right',
-                        closeButton: true,
-                        progressBar: true,
-                        showMethod: "fadeIn",
-                        hideMethod: "fadeOut",
-                        positionClass: "toast-top-right",
-                    })
-                })
-            </script>
-        @endscript
-    @endif
+
+    <x-toast type='Success' />
     <div class="row justify-content-center">
         <div class="col-md-12 col-lg-12">
             <div class="card">
@@ -29,6 +15,7 @@
                     </div> <!--end row-->
                 </div><!--end card-header-->
                 <div class="card-body pt-0">
+                    <x-search placeholder="Bahan" />
                     <div class="table-responsive">
                         <table class="table table-striped mb-0">
                             <thead class="table-light">
@@ -40,9 +27,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($data as $index => $item)
+                                @forelse ($data as $index => $item)
                                     <tr>
-                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ ($data->currentPage() - 1) * $data->perPage() + $index + 1 }}</td>
                                         <td>{{ $item->nama }}</td>
                                         <td>{{ $item->deskripsi }}</td>
                                         <td class="text-end">
@@ -55,11 +42,17 @@
 
                                         </td>
                                     </tr>
-                                @endforeach
-
+                                @empty
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted">Data tidak ditemukan.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
-                        </table><!--end /table-->
-                    </div><!--end /tableresponsive-->
+                        </table>
+                    </div>
+                    <div class="mt-3">
+                        {{ $data->links('pagination::bootstrap-5', data: ['scrollTo' => false]) }}
+                    </div>
                 </div><!--end card-body-->
             </div><!--end card-->
         </div> <!--end col-->
@@ -84,6 +77,5 @@
                 </div>
             </div>
         @endif
-
     </div><!--end row-->
 </div>

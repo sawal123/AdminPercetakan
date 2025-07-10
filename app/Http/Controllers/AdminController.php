@@ -8,23 +8,25 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
+        $back = null;
         $title = "Dashboard";
-        return view('admin.dashboard', ['title' => $title]);
+        return view('admin.dashboard', ['title' => $title, 'back' => $back]);
     }
 
     public function barang()
     {
-        $title = "Barang";
-        return view('admin.dashBarang', ['title' => $title]);
+        $back = null;
+        $title = "Daftar Barang";
+        return view('admin.dashBarang', ['title' => $title, 'back' => $back]);
     }
-    public function tagihan()
-    {
-        $title = "Tagihan";
-        return view('admin.dashTagihan', ['title' => $title]);
-    }
+    
+
+
+    // ============================
     public function pelanggan()
     {
+        $back = null;
         $title = "Pelanggan";
-        return view('admin.dashPelanggan', ['title' => $title]);
+        return view('admin.dashPelanggan', ['title' => $title, 'back' => $back]);
     }
 }

@@ -1,4 +1,4 @@
-@props(['title' => 'Default Title'])
+@props(['title' => 'Default Title', 'back' => ''])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" data-startbar="light" data-bs-theme="light">
 
@@ -18,8 +18,30 @@
     <link href="{{ asset('assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
-
+    @livewireStyles
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
+    <style>
+        /* Default untuk light mode */
+        [data-bs-theme="light"] .form-control::placeholder,
+        [data-bs-theme="light"] .form-select::placeholder {
+            color: #212529;
+            /* warna gelap agar placeholder terlihat di light mode */
+            opacity: 0.5;
+        }
+
+        /* Untuk dark mode */
+        [data-bs-theme="dark"] .form-control::placeholder,
+        [data-bs-theme="dark"] .form-select::placeholder {
+            color: #adb5bd;
+            /* abu terang agar terlihat di dark mode */
+            opacity: 0.5;
+        }
+
+        .form-control {
+            color: inherit;
+            opacity: 1;
+        }
+    </style>
 </head>
 
 <body class="font-sans antialiased">
@@ -39,21 +61,17 @@
                 <div class="page-content">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-sm-12">
+                            <div class="col-sm-12 no-print">
                                 <div class="page-title-box d-md-flex justify-content-md-between align-items-center">
+                                    @if ($back)
+                                        <a href="{{ $back }}" class="btn btn-primary" wire:navigate><i
+                                                class="las la-arrow-left"></i> Kembali</a>
+                                    @endif
                                     <h4 class="page-title">{{ $title }}</h4>
-                                    <div class="">
-                                        <ol class="breadcrumb mb-0">
-                                            <li class="breadcrumb-item"><a href="#">Dashboard</a>
-                                            </li><!--end nav-item-->
-                                            <li class="breadcrumb-item active">Dashboard</li>
-                                        </ol>
-                                    </div>
                                 </div><!--end page-title-box-->
                             </div><!--end col-->
                         </div><!--end row-->
                     </div>
-
                     {{ $slot }}
                     <footer class="footer text-center text-sm-start d-print-none">
                         <div class="container-fluid">
@@ -63,9 +81,6 @@
                                         <div class="card-body">
                                             <p class="text-muted mb-0">
                                                 ©
-                                                {{-- <script>
-                                                    document.write(new Date().getFullYear())
-                                                </script> --}}
                                                 Mifty
                                                 <span class="text-muted d-none d-sm-inline-block float-end">
                                                     Design with
@@ -84,7 +99,7 @@
             </div>
         </main>
     </div>
-
+    @livewireScripts
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
@@ -94,8 +109,6 @@
     <script src="https://apexcharts.com/samples/assets/stock-prices.js"></script>
     <script src="{{ asset('assets/js/pages/index.init.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
-
-
 
 
     <script>
@@ -117,6 +130,59 @@
             console.error("Theme toggle error:", e);
         }
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+    function waitForImagesToLoad(container, callback) {
+        const images = container.querySelectorAll("img");
+        let loadedCount = 0;
+
+        if (images.length === 0) {
+            callback(); // tidak ada gambar, langsung callback
+            return;
+        }
+
+        images.forEach(img => {
+            if (img.complete && img.naturalHeight !== 0) {
+                loadedCount++;
+                if (loadedCount === images.length) callback();
+            } else {
+                img.onload = img.onerror = () => {
+                    loadedCount++;
+                    if (loadedCount === images.length) callback();
+                };
+            }
+        });
+    }
+
+    document.getElementById("download-png").addEventListener("click", function () {
+        const invoiceElement = document.getElementById("invoice-area");
+
+        // Tambahkan kelas khusus jika ingin ubah tampilan download
+        invoiceElement.classList.add("download-mode");
+
+        // Tunggu semua gambar selesai load + tambahkan delay
+        waitForImagesToLoad(invoiceElement, () => {
+            setTimeout(() => {
+                html2canvas(invoiceElement, {
+                    scale: 2,
+                    useCORS: true,
+                    scrollY: -window.scrollY,
+                }).then(function (canvas) {
+                    const link = document.createElement("a");
+                    link.download = "tagihan-{{ now()->format('YmdHis') }}.png";
+                    link.href = canvas.toDataURL("image/png");
+                    link.click();
+
+                    invoiceElement.classList.remove("download-mode");
+                });
+            }, 500); // delay opsional 500ms
+        });
+    });
+</script>
+
+
+
 
 </body>
 
