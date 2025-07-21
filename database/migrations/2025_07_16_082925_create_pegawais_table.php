@@ -11,11 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sales', function (Blueprint $table) {
+        Schema::create('pegawais', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->string('nama');
             $table->string('telepon');
+            $table->string('alamat');
+            $table->date('birth');
+            $table->decimal('salary', 12, 2)->nullable();
+            $table->foreignId('posisi_id')->constrained()->onDelete('cascade');
+            $table->string('image')->nullable();
             $table->boolean('is_active')->nullable()->default(1);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -25,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sales');
+        Schema::dropIfExists('pegawais');
     }
 };

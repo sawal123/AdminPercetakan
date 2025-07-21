@@ -1,6 +1,6 @@
 <div>
 
-    <x-toast type='Success' />
+    <x-toast  />
     <div class="row justify-content-center">
         <div class="col-md-12 col-lg-12">
             <div class="card">
@@ -57,7 +57,7 @@
             </div><!--end card-->
         </div> <!--end col-->
         @if ($confirmingDelete)
-            <div class="modal d-block fade show" style="background-color: rgba(0,0,0,0.5);">
+            <div class="modal d-block fade show" wire:transition.out.opacity.duration.200ms style="background-color: rgba(0,0,0,0.5);">
                 <div class="modal-dialog modal-dialog-top">
                     <div class="modal-content">
                         <div class="modal-header bg-danger text-white">

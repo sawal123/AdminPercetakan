@@ -40,14 +40,16 @@ class EditTagihan extends Component
         $item = $this->pesananItems[$index] ?? null;
 
         if (!$item) {
-            session()->flash('error', 'Data tidak ditemukan.');
+            $message = ['Barang tidak ditemukan.', 'success', 'Success'];
+            $this->dispatch('showToast', message: $message[0], type: $message[1], title: $message[2]);
             return;
         }
 
         $barang = Barang::where('nama', $item['barang_nama'])->first();
 
         if (!$barang) {
-            session()->flash('error', 'Barang tidak ditemukan.');
+            $message = ['Barang tidak ditemukan.', 'success', 'Success'];
+            $this->dispatch('showToast', message: $message[0], type: $message[1], title: $message[2]);
             return;
         }
 
@@ -72,9 +74,8 @@ class EditTagihan extends Component
         Tagihan::where('id', $this->tagihan_id)->update([
             'total' => $totalBaru
         ]);
-
-        session()->flash('message', 'Item berhasil diperbarui.');
-        $this->dispatch('showToast');
+        $message = ['Item berhasil diperbarui.', 'success', 'Success'];
+        $this->dispatch('showToast', message: $message[0], type: $message[1], title: $message[2]);
     }
 
 
@@ -85,8 +86,8 @@ class EditTagihan extends Component
 
         if (!isset($this->pesananItems[$index])) {
             $this->modalConfirmDelete = false;
-            session()->flash('message', 'Item tidak ditemukan');
-            $this->dispatch('showToast');
+            $message = ['Item tidak ditemukan', 'success', 'Success'];
+            $this->dispatch('showToast', message: $message[0], type: $message[1], title: $message[2]);
             return;
         }
 
@@ -102,9 +103,9 @@ class EditTagihan extends Component
 
         $this->modalConfirmDelete = false;
         $this->indexToDelete = null;
-
-        session()->flash('message', 'Item berhasil dihapus.');
-        $this->dispatch('showToast');
+        
+        $message = ['Item berhasil dihapus.', 'success', 'Success'];
+        $this->dispatch('showToast', message: $message[0], type: $message[1], title: $message[2]);
     }
 
 

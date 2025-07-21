@@ -14,9 +14,9 @@ return new class extends Migration
     {
         Schema::create('pelanggans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sales_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('pegawais_id')->nullable()->constrained()->nullOnDelete();
             $table->string('nama');
-            $table->string('telepon')->nullable();
+            $table->bigInteger('telepon')->nullable();
             $table->string('alamat')->nullable();
             $table->boolean('seller')->nullable();
             $table->timestamps();

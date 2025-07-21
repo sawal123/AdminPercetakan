@@ -26,6 +26,12 @@ class Barang extends Component
 
     protected $paginationTheme = 'bootstrap'; // Pakai bootstrap pagination
 
+    protected $listeners = [
+        'barangSimpan' => 'render',
+        'barangHapus' => 'render',
+    ];
+
+
     protected $rules = [
         'kode' => 'required|string|max:10',
         'barang' => 'required|string|max:255',
@@ -44,10 +50,7 @@ class Barang extends Component
         $this->resetPage(); // Reset ke halaman 1 saat search berubah
     }
 
-    public function mount()
-    {
-        
-    }
+    public function mount() {}
 
     public function modalB()
     {
@@ -93,9 +96,10 @@ class Barang extends Component
                 'harga_seller' => $this->harga_seller,
             ]
         );
-
-        session()->flash('message', $this->barangId ? 'Barang berhasil diperbarui.' : 'Barang berhasil ditambahkan.');
-        $this->dispatch('showToast');
+        $this->dispatch('barangSimpan');
+        $notif =  $this->barangId ? 'Barang berhasil diperbarui.' : 'Barang berhasil ditambahkan.';
+        $message = [$notif, 'success', 'Success'];
+        $this->dispatch('showToast', message: $message[0], type: $message[1], title: $message[2]);
 
         $this->modalBarang = false;
         $this->resetForm();
@@ -111,8 +115,9 @@ class Barang extends Component
     {
         if ($this->barangIdDelete) {
             ModelsBarang::findOrFail($this->barangIdDelete)->delete();
-            session()->flash('message', 'Barang berhasil dihapus.');
-            $this->dispatch('showToast');
+            $this->dispatch('barangHapus');
+            $message = ['Barang berhasil dihapus.', 'success', 'Success'];
+            $this->dispatch('showToast', message: $message[0], type: $message[1], title: $message[2]);
         }
         $this->modalConfirmDelete = false;
         $this->barangIdDelete = null;
@@ -130,12 +135,12 @@ class Barang extends Component
             ->orWhere('kode', 'like', '%' . $this->search . '%')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-            $this->dataBahan = Bahan::all();
-    
+        $this->dataBahan = Bahan::all();
+
 
         return view('livewire.admin.barang', [
             'dataBarang' => $barang,
- 
+
         ]);
     }
 }

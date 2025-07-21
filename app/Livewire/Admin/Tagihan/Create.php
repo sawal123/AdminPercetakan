@@ -2,12 +2,13 @@
 
 namespace App\Livewire\Admin\Tagihan;
 
+use App\Models\Sales;
 use App\Models\Barang;
+use App\Models\Pegawai;
 use App\Models\Tagihan;
 use Livewire\Component;
 use App\Models\Pelanggan;
 use App\Models\PesananItem;
-use App\Models\Sales;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Log;
@@ -130,14 +131,17 @@ class Create extends Component
         } else {
             $tagihan = Tagihan::find($this->tagihan_id);
             if ($this->pelanggan_id != $tagihan->pelanggan_id) {
-                session()->flash('error', 'Pelanggan tidak boleh diubah setelah tagihan dibuat.');
+                $message = 'Pelanggan tidak boleh diubah setelah tagihan dibuat.';
+                $type = 'error';
+                $title = 'Success';
+                $this->dispatch('showToast', message: $message, type: $type, title: $title);
                 return;
             }
         }
         // Cek jumlah item yang sudah tersimpan
         if ($tagihan->pesananItems()->count() >= $this->maxItems) {
-             session()->flash('message', 'Maksimal 5 Item Setiap Invoice');
-              $this->dispatch('showToast');
+            $message = ['Maksimal 5 Item Setiap Invoice', 'info', 'Info'];
+            $this->dispatch('showToast', message: $message[0], type: $message[1], title: $message[2]);
             return;
         }
         // Simpan item
@@ -157,20 +161,22 @@ class Create extends Component
 
         // Reset input item (bukan tagihan)
         $this->reset(['nama_barang', 'deskripsi', 'panjang', 'lebar', 'jumlah', 'harga_satuan', 'subtotal']);
-
-        session()->flash('success', 'Item berhasil disimpan.');
+        $message = ['Item berhasil disimpan.', 'success', 'Success'];
+        $this->dispatch('showToast', message: $message[0], type: $message[1], title: $message[2]);
     }
+    
 
 
     public function render()
     {
+
         // error_reporting(0);
         return view('livewire.admin.tagihan.create', [
             'barangs' => Barang::all(), // Ambil semua barang untuk dropdown
             'pelanggan' => Pelanggan::all(),
             'savedItems' => $this->savedItems, // Tambah ini
             'dataPelanggan' => Pelanggan::find($this->pelanggan_id),
-            'sales' => Sales::where('is_active', 1)->get()
+            'sales' => Pegawai::where('is_active', 1)->where('posisi_id', 2)->get()
         ]);
     }
 }

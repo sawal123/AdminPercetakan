@@ -20,6 +20,6 @@ class Tagihan extends Model
     }
      public function sales()
     {
-        return $this->belongsTo(Sales::class); // jika relasi via pelanggan, ubah nanti
+        return $this->belongsTo(Pegawai::class); // jika relasi via pelanggan, ubah nanti
     }
 }

@@ -1,20 +1,5 @@
 <div>
-    @if (session()->has('message'))
-        @script
-            <script>
-                $wire.on('showToast', () => {
-                    toastr.success('{{ session('message') }}', 'Success', {
-                        positionClass: 'toast-top-right',
-                        closeButton: true,
-                        progressBar: true,
-                        showMethod: "fadeIn",
-                        hideMethod: "fadeOut",
-                        positionClass: "toast-top-right",
-                    })
-                })
-            </script>
-        @endscript
-    @endif
+    <x-toast />
     <div class="row justify-content-center">
         <div class="col-md-12 col-lg-12">
             <div class="card">

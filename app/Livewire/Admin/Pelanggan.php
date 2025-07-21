@@ -2,20 +2,22 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Sales;
+use App\Models\Pegawai;
 use Livewire\Component;
 use Livewire\WithPagination;
-// Paginator::useBootstrap();
 use App\Models\Pelanggan as ModelsPelanggan;
 
 class Pelanggan extends Component
 {
     use WithPagination;
-    
+    public $forceRefresh = false;
     public $nama, $telepon, $alamat, $seller, $sales_id;
     public $modalPelanggan = false;
     public $pelangganId, $modalConfirmDelete = false, $deleteId, $search;
-
+    protected $listeners = [
+        'pelangganSimpan' => 'render',
+        'pelangganHapus' => 'render',
+    ];
     // Fungsi untuk membuka modal Create/Edit
     public function openModal($pelangganId = null)
     {
@@ -23,7 +25,7 @@ class Pelanggan extends Component
         if ($pelangganId) {
             $this->pelangganId = $pelangganId;
             $pelanggan = ModelsPelanggan::find($pelangganId);
-            $this->sales_id = $pelanggan->sales_id;
+            $this->sales_id = $pelanggan->pegawais_id;
             $this->nama = $pelanggan->nama;
             $this->telepon = $pelanggan->telepon;
             $this->alamat = $pelanggan->alamat;
@@ -39,6 +41,7 @@ class Pelanggan extends Component
         $this->resetPage();
     }
     // Fungsi untuk menyimpan atau memperbarui data pelanggan
+
     public function simpan()
     {
         $this->validate([
@@ -47,12 +50,12 @@ class Pelanggan extends Component
             'alamat' => 'nullable|string',
             'seller' => 'nullable|boolean',
         ]);
-
+        // dd($this->sales_id);
         if ($this->pelangganId) {
             // Update data pelanggan
             $pelanggan = ModelsPelanggan::find($this->pelangganId);
             $pelanggan->update([
-                'sales_id' => $this->sales_id,
+                'pegawais_id' => $this->sales_id,
                 'nama' => $this->nama,
                 'telepon' => $this->telepon,
                 'alamat' => $this->alamat,
@@ -61,7 +64,7 @@ class Pelanggan extends Component
         } else {
             // Menyimpan data pelanggan baru
             ModelsPelanggan::create([
-                'sales_id' => $this->sales_id,
+                'pegawais_id' => $this->sales_id,
                 'nama' => $this->nama,
                 'telepon' => $this->telepon,
                 'alamat' => $this->alamat,
@@ -71,8 +74,11 @@ class Pelanggan extends Component
 
         $this->reset();
         $this->modalPelanggan = false;
-        session()->flash('message', $this->pelangganId ? 'Pelanggan berhasil diperbarui.' : 'Pelanggan berhasil disimpan.');
-        $this->dispatch('showToast');
+        $this->dispatch('pelangganSimpan');
+        $message = $this->pelangganId ? 'Pelanggan berhasil diperbarui.' : 'Pelanggan berhasil disimpan.';
+        $type = 'success';
+        $title = 'Success';
+        $this->dispatch('showToast', message: $message, type: $type, title: $title);
     }
 
     // Fungsi untuk membuka modal konfirmasi delete
@@ -83,25 +89,29 @@ class Pelanggan extends Component
     }
 
     // Fungsi untuk menghapus data pelanggan
+
     public function hapus()
     {
         $pelanggan = ModelsPelanggan::find($this->deleteId);
         if ($pelanggan) {
             $pelanggan->delete();
-            session()->flash('message', 'Pelanggan berhasil dihapus.');
-            $this->dispatch('showToast');
+            $this->deleteId = null;
+            $this->dispatch('showToast', message: 'Pelanggan berhasil dihapus!', type: 'success', title: 'Success');
         }
+        $this->dispatch('pelangganHapus');
         $this->modalConfirmDelete = false;
     }
 
 
     public function render()
     {
-        $sales = Sales::where('is_active', 1)->get();
-        $pelanggan = ModelsPelanggan::query()->where('nama', 'like', '%' . $this->search . '%')
+        $sales = Pegawai::where('is_active', 1)->where('posisi_id', 2)->get();
+        $pelanggan = ModelsPelanggan::where('nama', 'like', '%' . $this->search . '%')
             ->orWhere('alamat', 'like', '%' . $this->search . '%')
+            ->orWhere('telepon', 'like', '%' . $this->search . '%')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
+
         return view('livewire.admin.pelanggan', ['pelanggan' => $pelanggan, 'sales' => $sales]);
     }
 }

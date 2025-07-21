@@ -15,7 +15,11 @@ class Bahan extends Component
     public $bahan_id;
     public $isEdit = false;
     public $deleteId = null;
-    public $search = ''; // Tambahan untuk fitur search
+    public $search = '';
+    protected $listeners = [
+        'bahanSimpan' => 'render',
+        'bahanHapus' => 'render',
+    ];
     public function modal()
     {
         $this->resetForm();
@@ -36,9 +40,11 @@ class Bahan extends Component
             'nama' => $this->nama,
             'deskripsi' => $this->deskripsi
         ]);
-        // session()->flash('message', $this->bahan_id ? 'Bahan berhasil diperbarui.' : 'Bahan berhasil ditambahkan.');
+        $this->dispatch('bahanSimpan');
         $message = $this->bahan_id ? 'Bahan berhasil diperbarui.' : 'Bahan berhasil ditambahkan.';
-        $this->dispatch('showToast', message: $message);
+        $type = 'success';
+        $title = 'Success';
+        $this->dispatch('showToast', message: $message, type: $type, title: $title);
         $this->resetForm();
     }
 
@@ -66,7 +72,9 @@ class Bahan extends Component
         ]);
         // session()->flash('message', 'Bahan berhasil diperbarui.');
         $message = 'Bahan berhasil diperbarui.';
-        $this->dispatch('showToast', message: $message);
+        $type = 'success';
+        $title = 'Update';
+        $this->dispatch('showToast', message: $message, type: $type, title: $title);
         $this->resetForm();
     }
 
@@ -81,8 +89,11 @@ class Bahan extends Component
         ModelsBahan::findOrFail($this->deleteId)->delete();
         $this->confirmingDelete = false;
         $this->deleteId = null;
-
-        $this->dispatch('showToast');
+        $this->dispatch('bahanHapus');
+        $message = 'Bahan berhasil dihapus.';
+        $type = 'success';
+        $title = 'Delete';
+        $this->dispatch('showToast', message: $message, type: $type, title: $title);
     }
 
     public function resetForm()

@@ -1,6 +1,9 @@
 @props(['title' => 'Default Title', 'back' => ''])
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" data-startbar="light" data-bs-theme="light">
+{{-- <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" data-startbar="light" data-bs-theme="light"> --}}
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" id="html-root" data-bs-theme="dark">
+{{-- <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" id="html-root"  data-bs-theme="dark"> --}}
+
 
 <head>
     <meta charset="utf-8">
@@ -8,6 +11,20 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'Laravel') }}</title>
+    <script>
+        (function() {
+            try {
+                const theme = localStorage.getItem("theme") || (window.matchMedia("(prefers-color-scheme: dark)")
+                    .matches ? "dark" : "light");
+                document.documentElement.setAttribute("data-bs-theme", theme);
+                document.body?.setAttribute("data-bs-theme", theme); // Tambahan ini
+            } catch (e) {
+                document.documentElement.setAttribute("data-bs-theme", "light");
+                document.body?.setAttribute("data-bs-theme", "light");
+            }
+        })();
+    </script>
+
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -20,7 +37,28 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
     @livewireStyles
     {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
+
+
     <style>
+        html[data-bs-theme="dark"] body {
+            background-color: #0f111a !important;
+            /* atau warna yang kamu pakai */
+        }
+
+        html[data-bs-theme="dark"] .sidebar {
+            background-color: #11131e !important;
+        }
+
+        body[data-bs-theme="dark"] {
+            background-color: #0f111a !important;
+        }
+
+        html[data-bs-theme="dark"] .topbar,
+        html[data-bs-theme="dark"] .sidebar {
+            background-color: #11131e !important;
+            color: #ffffff;
+        }
+
         /* Default untuk light mode */
         [data-bs-theme="light"] .form-control::placeholder,
         [data-bs-theme="light"] .form-select::placeholder {
@@ -44,7 +82,7 @@
     </style>
 </head>
 
-<body class="font-sans antialiased">
+<body class="font-sans antialiased" data-bs-theme="">
     <div class="min-h-screen bg-gray-100">
 
         <!-- Top Bar Start -->
@@ -101,89 +139,20 @@
     </div>
     @livewireScripts
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js" ></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}" data-navigate-once></script>
     <script src="{{ asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
+
     <script src="{{ asset('assets/libs/apexcharts/apexcharts.min.js') }}"></script>
     <script src="https://apexcharts.com/samples/assets/stock-prices.js"></script>
     <script src="{{ asset('assets/js/pages/index.init.js') }}"></script>
+    
     <script src="{{ asset('assets/js/app.js') }}"></script>
 
-
-    <script>
-        try {
-            const currentTheme = localStorage.getItem("theme");
-            if (currentTheme) {
-                document.documentElement.setAttribute("data-bs-theme", currentTheme);
-            }
-            var themeColorToggle = document.getElementById("light-dark-mode");
-            if (themeColorToggle) {
-                themeColorToggle.addEventListener("click", function() {
-                    let current = document.documentElement.getAttribute("data-bs-theme");
-                    let newTheme = current === "light" ? "dark" : "light";
-                    document.documentElement.setAttribute("data-bs-theme", newTheme);
-                    localStorage.setItem("theme", newTheme);
-                });
-            }
-        } catch (e) {
-            console.error("Theme toggle error:", e);
-        }
-    </script>
-
+    {{-- <script src="{{ asset('assets/js/app/theme.js') }}"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script>
-    function waitForImagesToLoad(container, callback) {
-        const images = container.querySelectorAll("img");
-        let loadedCount = 0;
-
-        if (images.length === 0) {
-            callback(); // tidak ada gambar, langsung callback
-            return;
-        }
-
-        images.forEach(img => {
-            if (img.complete && img.naturalHeight !== 0) {
-                loadedCount++;
-                if (loadedCount === images.length) callback();
-            } else {
-                img.onload = img.onerror = () => {
-                    loadedCount++;
-                    if (loadedCount === images.length) callback();
-                };
-            }
-        });
-    }
-
-    document.getElementById("download-png").addEventListener("click", function () {
-        const invoiceElement = document.getElementById("invoice-area");
-
-        // Tambahkan kelas khusus jika ingin ubah tampilan download
-        invoiceElement.classList.add("download-mode");
-
-        // Tunggu semua gambar selesai load + tambahkan delay
-        waitForImagesToLoad(invoiceElement, () => {
-            setTimeout(() => {
-                html2canvas(invoiceElement, {
-                    scale: 2,
-                    useCORS: true,
-                    scrollY: -window.scrollY,
-                }).then(function (canvas) {
-                    const link = document.createElement("a");
-                    link.download = "tagihan-{{ now()->format('YmdHis') }}.png";
-                    link.href = canvas.toDataURL("image/png");
-                    link.click();
-
-                    invoiceElement.classList.remove("download-mode");
-                });
-            }, 500); // delay opsional 500ms
-        });
-    });
-</script>
-
-
-
-
+    <script src="{{ asset('assets/js/app/printDownload.js') }}"></script>
 </body>
 
 

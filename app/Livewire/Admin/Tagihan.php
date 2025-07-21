@@ -34,11 +34,15 @@ class Tagihan extends Component
 
         if ($tagihanDelete) {
             $tagihanDelete->delete();
-            session()->flash('message', 'Tagihan berhasil dihapus.');
+            $message = 'Tagihan dihapus.';
+            $type = 'success';
         } else {
-            session()->flash('message', 'Tagihan tidak ditemukan.');
+            $message = 'Tagihan tidak ditemukan.';
+            $type = 'error';
         }
-        $this->dispatch('showToast');
+
+        $title = 'Success';
+        $this->dispatch('showToast', message: $message, type: $type, title: $title);
         $this->modalConfirmDelete = false;
         $this->tagihanToDeleteId = null;
     }
@@ -48,23 +52,23 @@ class Tagihan extends Component
         $tagihanLunas = ModelsTagihan::find($id);
 
         if (!$tagihanLunas) {
-            session()->flash('error', 'Tagihan tidak ditemukan!');
+            $message = "Tagihan Tidak ditemukan";
             return;
         }
 
         $message = '';
         if ($tagihanLunas->status == 1) {
             $tagihanLunas->status = 0;
-            $message = "Tagihan Belum Lunas!";
+              $message = ['Tagihan Belum Lunas!', 'warning', 'Warning'];
         } else {
             $tagihanLunas->status = 1;
-            $message = "Tagihan Lunas!";
+            $message = ['Tagihan Lunas!', 'success', 'success'];
         }
 
         $tagihanLunas->save();
 
-        // session()->flash('message', $message);
-        $this->dispatch('showToast', message: $message);
+
+        $this->dispatch('showToast', message: $message[0], type: $message[1], title: $message[2]);
     }
 
     public function mount() {}

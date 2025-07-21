@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bahans', function (Blueprint $table) {
+        Schema::create('tagihans', function (Blueprint $table) {
             $table->id();
-            $table->string('nama'); // Contoh: MMT, Vinyl, Art Paper
-            $table->text('deskripsi')->nullable();
+            $table->foreignId('pelanggan_id')->constrained()->onDelete('cascade');
+            $table->date('tanggal');
+            $table->string('invoice');
+            $table->integer('total')->default(0); // total semua item
+            $table->boolean('status')->default(0); // bisa: menunggu, selesai, batal
             $table->softDeletes();
             $table->timestamps();
         });
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bahans');
+        Schema::dropIfExists('tagihans');
     }
 };

@@ -16,17 +16,21 @@ new #[Layout('layouts.guest')] class extends Component {
     {
         $this->validate();
 
-        $this->form->authenticate();
+        try {
+            $this->form->authenticate();
 
-        Session::regenerate();
+            Session::regenerate();
 
-        $this->redirectIntended(default: RouteServiceProvider::HOME, navigate: true);
+            $this->redirectIntended(default: RouteServiceProvider::HOME, navigate: false);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Tampilkan pesan error di Livewire
+            $this->addError('form.email', 'Email atau password salah.');
+        }
     }
 }; ?>
 
 <div>
-    <!-- Session Status -->
-    {{-- <x-auth-session-status class="mb-4" :status="session('status')" /> --}}
+
 
     <div class="card-body">
         <div class="row">
@@ -42,31 +46,37 @@ new #[Layout('layouts.guest')] class extends Component {
                             <p class="text-muted fw-medium mb-0">Sign in to continue to Mifty.</p>
                         </div>
                     </div>
-                    <div class="card-body pt-0">
+                    <div class="card-body pt-0 mt-2">
+                        @if ($errors->has('form.email'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ $errors->first('form.email') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                        @endif
+
+
                         <form class="my-4" wire:submit="login">
                             <div class="form-group mb-2">
                                 <label class="form-label" for="username">Username</label>
-                                <input type="text" class="form-control" id="username"  wire:model="form.email"
+                                <input type="email" class="form-control" id="username" wire:model="form.email"
                                     placeholder="Enter username">
                             </div><!--end form-group-->
 
                             <div class="form-group">
                                 <label class="form-label" for="userpassword">Password</label>
-                                <input type="password" class="form-control" name="password" id="userpassword" wire:model="form.password"
-                                    placeholder="Enter password">
+                                <input type="password" class="form-control" name="password" id="userpassword"
+                                    wire:model="form.password" placeholder="Enter password">
                             </div><!--end form-group-->
 
                             <div class="form-group row mt-3">
                                 <div class="col-sm-6">
                                     <div class="form-check form-switch form-switch-success">
-                                        <input class="form-check-input" wire:model="form.remember" type="checkbox" id="customSwitchSuccess">
+                                        <input class="form-check-input" wire:model="form.remember" type="checkbox"
+                                            id="customSwitchSuccess">
                                         <label class="form-check-label" for="customSwitchSuccess">Remember
                                             me</label>
                                     </div>
-                                </div><!--end col-->
-                                <div class="col-sm-6 text-end">
-                                    <a href="auth-recover-pw.html" class="text-muted font-13"><i
-                                            class="dripicons-lock"></i> Forgot password?</a>
                                 </div><!--end col-->
                             </div><!--end form-group-->
 
@@ -79,25 +89,7 @@ new #[Layout('layouts.guest')] class extends Component {
                                 </div><!--end col-->
                             </div> <!--end form-group-->
                         </form><!--end form-->
-                        <div class="text-center  mb-2">
-                            <p class="text-muted">Don't have an account ? <a href="/register"
-                                    class="text-primary ms-2" wire:navigate>Free Resister</a></p>
-                            <h6 class="px-3 d-inline-block">Or Login With</h6>
-                        </div>
-                        <div class="d-flex justify-content-center">
-                            <a href=""
-                                class="d-flex justify-content-center align-items-center thumb-md bg-blue-subtle text-blue rounded-circle me-2">
-                                <i class="fab fa-facebook align-self-center"></i>
-                            </a>
-                            <a href=""
-                                class="d-flex justify-content-center align-items-center thumb-md bg-info-subtle text-info rounded-circle me-2">
-                                <i class="fab fa-twitter align-self-center"></i>
-                            </a>
-                            <a href=""
-                                class="d-flex justify-content-center align-items-center thumb-md bg-danger-subtle text-danger rounded-circle">
-                                <i class="fab fa-google align-self-center"></i>
-                            </a>
-                        </div>
+
                     </div><!--end card-body-->
                 </div><!--end card-->
             </div><!--end col-->

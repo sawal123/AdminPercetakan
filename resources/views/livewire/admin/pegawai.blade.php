@@ -5,18 +5,18 @@
         <div class="col-md-12 col-lg-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
-                    <button type="button" wire:click='openModal' class="btn btn-primary">Tambah Pelanggan</button>
-                    @if ($modalPelanggan)
-                        @include('livewire.admin.pelanggan.modalCreate')
+                    <button type="button" wire:click='openModal' class="btn btn-primary">Tambah Pegawai</button>
+                    @if ($modalPegawai)
+                        @include('livewire.admin.pegawai.createPegawai')
                     @endif
                     <div class="row align-items-center">
                         <div class="col">
-                            <h4 class="card-title">Pelanggan</h4>
+                            <h4 class="card-title">Pegawai</h4>
                         </div>
                     </div>
                 </div>
                 <div class="card-body pt-0">
-                    <x-search placeholder="Pelanggan" />
+                    <x-search placeholder="pegawai" />
 
                     <div class="table-responsive">
                         <table class="table table-striped mb-0">
@@ -25,23 +25,22 @@
                                     <th>#</th>
                                     <th>Nama</th>
                                     <th>No Hp</th>
-                                    <th>Alamat</th>
-                                    <th>Sales</th>
-                                    <th>Seller</th>
+                                    <th>Posisi</th>
+                                    <th>Is_Active</th>
                                     <th class="text-end">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($pelanggan as $key=>$item)
-                                    <tr wire:key="pelanggan-{{ $item->id }}">
-                                        <td>{{ ($pelanggan->currentPage() - 1) * $pelanggan->perPage() + $loop->iteration }}
+                                @forelse ($pegawai as $index=>$item)
+                                    <tr wire:key='pegawai-{{$item->id}}'>
+                                        <td>{{ ($pegawai->currentPage() - 1) * $pegawai->perPage() + $index + 1 }}
                                         </td>
                                         <td>{{ $item->nama }}</td>
                                         <td>{{ $item->telepon }}</td>
-                                        <td>{{ $item->alamat }}</td>
-                                        <td>{{ $item->pegawai->nama ?? '-' }}</td>
+                                        <td>{{ $item->posisi->nama_posisi }}</td>
+
                                         <td><span
-                                                class="badge {{ $item->seller ? 'bg-success' : 'bg-danger' }} ">{{ $item->seller ? 'Seller' : 'Non Seller' }}</span>
+                                                class="badge {{ $item->is_active ? 'bg-success' : 'bg-danger' }} ">{{ $item->is_active ? 'Active' : 'Non Active' }}</span>
                                         </td>
                                         <td class="text-end space-x-2"><button class="btn btn-sm btn-primary"
                                                 wire:click="openModal({{ $item->id }})"><i
@@ -59,7 +58,7 @@
                             </tbody>
                         </table>
                         <div class="mt-4">
-                            {{ $pelanggan->links('pagination::bootstrap-5', data: ['scrollTo' => false]) }}
+                            {{ $pegawai->links('pagination::bootstrap-5', data: ['scrollTo' => false]) }}
                         </div>
                     </div>
                 </div>
@@ -77,7 +76,7 @@
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Apakah Anda yakin ingin menghapus pelanggan ini?</p>
+                        <p>Apakah Anda yakin ingin menghapus pegawai ini?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" wire:click="$set('modalConfirmDelete', false)"
@@ -90,3 +89,4 @@
     @endif
 
 </div>
+

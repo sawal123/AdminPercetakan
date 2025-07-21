@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tagihans', function (Blueprint $table) {
+        Schema::create('posisis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pelanggan_id')->constrained()->onDelete('cascade');
-            $table->date('tanggal');
-            $table->string('invoice');
-            $table->integer('total')->default(0); // total semua item
-            $table->boolean('status')->default(0); // bisa: menunggu, selesai, batal
+            $table->string('nama_posisi');
             $table->timestamps();
         });
     }
@@ -27,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tagihans');
+        Schema::dropIfExists('posisis');
     }
 };

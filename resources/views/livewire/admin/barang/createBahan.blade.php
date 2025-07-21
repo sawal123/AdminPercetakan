@@ -1,5 +1,4 @@
-<div class="modal d-block fade show" tabindex="-1" role="dialog" x-data="{ show: @entangle('openModal') }" x-show="show"
-    x-transition:enter="animate__animated animate__fadeInDown" x-transition:leave="animate__animated animate__fadeOutUp"
+<div class="modal d-block fade show" tabindex="-1" role="dialog" wire:transition.out.opacity.duration.200ms
     style="background-color: rgba(0,0,0,0.5);">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">

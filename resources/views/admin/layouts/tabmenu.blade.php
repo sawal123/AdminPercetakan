@@ -1,13 +1,17 @@
+@php
+    $isAdmin = Auth::user()->hasRole('admin');
+@endphp
+
 <div class="startbar d-print-none">
     <!--start brand-->
     <div class="brand">
         <a href="index.html" class="logo">
             <span>
-                <img src="{{asset('assets/images/logo-sm.png')}}" alt="logo-small" class="logo-sm">
+                <img src="{{ asset('assets/images/logo-sm.png') }}" alt="logo-small" class="logo-sm">
             </span>
             <span class="">
-                <img src="{{asset('assets/images/logo-light.png')}}" alt="logo-large" class="logo-lg logo-light">
-                <img src="{{asset('assets/images/logo-dark.png')}}" alt="logo-large" class="logo-lg logo-dark">
+                <img src="{{ asset('assets/images/logo-light.png') }}" alt="logo-large" class="logo-lg logo-light">
+                <img src="{{ asset('assets/images/logo-dark.png') }}" alt="logo-large" class="logo-lg logo-dark">
             </span>
         </a>
     </div>
@@ -46,21 +50,50 @@
                             <span>Pelanggan</span>
                         </a>
                     </li><!--end nav-item-->
+                    <li class="nav-item">
+                        
+                        @if ($isAdmin)
+                            <a class="nav-link" href="/dashboard/pegawai" wire:navigate>
+                                <i class="iconoir-community menu-icon"></i>
+                                <span>Pegawai </span>
+                            </a>
+                        @else
+                            <a href="javascript:void(0);" class="nav-link" onclick="showRestrictedModal()">
+                                <i class="iconoir-community menu-icon"></i>
+                                <span>Sales </span>
+                                <i class="iconoir-lock menu-icon text-end"></i>
+                            </a>
+                        @endif
+                    </li>
 
-                    
+
+
                 </ul><!--end navbar-nav--->
-                <div class="update-msg text-center">
-                    <div
-                        class="d-flex justify-content-center align-items-center thumb-lg update-icon-box  rounded-circle mx-auto">
-                        <img src="assets/images/extra/party.gif" alt="" class="d-inline-block me-1"
-                            height="30">
-                    </div>
-                    <h5 class="mt-3">Mannat Themes</h5>
-                    <p class="mb-3 text-muted">Mifty is a high quality web applications.</p>
-                    <a href="javascript: void(0);" class="btn bg-black text-white shadow-sm rounded-pill">Upgrade your
-                        plan</a>
-                </div>
+
             </div>
         </div><!--end startbar-collapse-->
     </div><!--end startbar-menu-->
 </div><!--end startbar-->
+
+<div class="modal fade" id="restrictedModal" tabindex="-1" aria-labelledby="restrictedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-top text-center">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-center">
+                <h5 class="modal-title " id="restrictedModalLabel">Akses Ditolak</h5>
+            </div>
+            <div class="modal-body">
+                Maaf, hanya admin yang dapat mengakses halaman Sales. <br>
+                <button type="button" class="btn btn-danger mt-2" data-bs-dismiss="modal">Tutup</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function showRestrictedModal() {
+        let modal = new bootstrap.Modal(document.getElementById('restrictedModal'));
+        modal.show();
+    }
+</script>

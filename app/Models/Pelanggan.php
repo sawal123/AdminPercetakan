@@ -15,7 +15,7 @@ class Pelanggan extends Model
         return $this->hasMany(tagihan::class);
     }
 
-    public function sales(){
-        return $this->belongsTo(Sales::class);
+    public function pegawai(){
+        return $this->belongsTo(Pegawai::class, 'pegawais_id');
     }
 }

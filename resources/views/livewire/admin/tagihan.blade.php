@@ -1,20 +1,5 @@
 <div>
-    {{-- Success is as dangerous as failure. --}}
-    {{-- @if (session()->has('message')) --}}
-    @script
-        <script>
-            window.addEventListener('showToast', event => {
-                toastr.success(event.detail.message, 'Info', {
-                    positionClass: 'toast-top-right',
-                    closeButton: true,
-                    progressBar: true,
-                    showMethod: "fadeIn",
-                    hideMethod: "fadeOut"
-                });
-            });
-        </script>
-    @endscript
-    {{-- @endif --}}
+    <x-toast  />
     <div class="row justify-content-center">
         <div class="col-md-12 col-lg-12">
             <div class="card">
@@ -98,7 +83,7 @@
         </div>
     </div>
     @if ($modalConfirmDelete)
-        <div class="modal d-block fade show" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal d-block fade show" wire:transition.out.opacity.duration.200ms style="background-color: rgba(0,0,0,0.5);">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header bg-danger text-white">
